@@ -25,6 +25,13 @@
       :items="users"
       :search="search"
     >
+
+      <template v-slot:[`item.page_name`]="{ item }">
+        <a :href="item.page_name">
+         https://pages.planestic.udistrital.edu.co/{{ item.page_name }}
+        </a>
+    </template>
+
      <template v-slot:[`item.actions`]="{ item }">
             <v-icon small :title="actions.edit.title"  class="mr-2" @click="editUser(item.id)">{{actions.edit.icon}}</v-icon>
             <v-icon small :title="actions.detail.title" class="mr-2" @click="detailUser(item.id)">{{actions.detail.icon}}</v-icon>
