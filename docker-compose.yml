@@ -1,0 +1,22 @@
+version: '3'
+networks:
+ campus_virtual:
+
+services:
+  ud-pages-client:
+     build: .
+     container_name: ud-pages-client
+     restart: on-failure
+     env_file:
+        - .env
+     networks:
+        - campus_virtual
+     labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ud-pages-client.rule=Host(`pages.planestic.udistrital.edu.co`)"
+      - "traefik.http.routers.ud-pages-client.tls=true"
+      - "traefik.http.routers.ud-pages-client.tls.certresolver=le"
+      - "traefik.http.services.ud-pages-client.loadbalancer.server.port=80"           
+networks:
+  campus_virtual:
+    external: true

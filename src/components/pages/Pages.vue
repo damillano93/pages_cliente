@@ -48,9 +48,9 @@ export default {
   name: "users-list",
   data() {
     return {
-    h1:{ text: "Listado de usuarios", icon: "mdi-account" },
+    h1:{ text: "Listado de paginas", icon: "mdi-account" },
     search: '',
-    find: { label: 'Buscar por email', button: 'Buscar' },
+    find: { label: 'Buscar por nombre', button: 'Buscar' },
     add: { button: 'Agregar', route: '/pages/add' },
     users: [],
     title: "",
@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     retrieveUsers() {   
-      UserService.getUsers()
+      UserService.getUsersByEmail(localStorage.email)
         .then((response) => {
           this.users = response.data
         })
