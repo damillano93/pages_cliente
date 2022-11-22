@@ -1,5 +1,5 @@
 <template>
- <v-container class="grey lighten-5">
+ <v-container>
          <div>
     <h1>{{title}}</h1>
     </div>

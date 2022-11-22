@@ -16,8 +16,21 @@
           />
          
         </button>
+        
         <!--href="http://localhost:3000/google"-->
       </a>
+      <a href="https://pages.planestic.udistrital.edu.co/apipages/google">
+        <button class="btn btn-light" disabled>
+          <img
+            class="ms-icon center"
+            src="../assets/images/microsoftlogo.png"
+          />
+         
+        </button>
+        
+        <!--href="http://localhost:3000/google"-->
+      </a>
+
     </div>
   </div>
 </template>
@@ -76,7 +89,12 @@ export default {
   margin: auto;
 }
 .google-icon {
+  padding: 20px;
   width: 70px;
+  height: 70px;
+}
+.ms-icon {
+  width: 140px;
   height: 70px;
 }
 .center {

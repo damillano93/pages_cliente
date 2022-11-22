@@ -1,40 +1,31 @@
 <template>
-  <v-container class="lighten-5">
+  <v-container>
     <v-container>
       <h2>{{ title }} {{ name }}</h2>
     </v-container>
-              <v-carousel :show-arrows="false" v-if="!isMobile">
-    <v-carousel-item
-      v-for="(item,i) in items"
-      :key="i"
-      :src="item.src"
-    ></v-carousel-item>
-  </v-carousel>
+
     <div class="row row--dense">
-      <div
-        v-for="(button, index) in buttons"
-        :key="index"
-        class="col-sm-6 col-lg-4 col-12"
-      >
-        <div
-          class="overflow-hidden v-sheet v-sheet--outlined theme--light rounded"
-          min-height="61"
-          style="min-height: 61px"
-        >
+      <div v-for="(button, index) in buttons" :key="index" class="col-sm-8 col-lg-4 col-12">
+        <v-card outlined>
           <a
             :href="button.route"
-            class="v-list-item v-list-item--link theme--light"
-            tabindex="0"
-          >
-            <div class="v-list-item__icon">
-              <v-icon x-large :title="button.text">{{ button.icon }}</v-icon>
-            </div>
-            <div class="v-list-item__content">
-              <div class="v-list-item__title">{{ button.text }}</div>
-              <div class="v-list-item__subtitle">{{ button.description }}</div>
-            </div>
+             style="text-decoration: none;"
+            >
+          <v-list-item three-line>
+            <v-list-item-content>
+              <v-icon large >
+                {{ button.icon }}
+              </v-icon>
+
+              <v-list-item-title class="text-h5 mb-1">
+                {{ button.text }}
+              </v-list-item-title>
+              <v-list-item-subtitle>{{ button.description }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
           </a>
-        </div>
+        </v-card>
+
       </div>
     </div>
   </v-container>
@@ -83,7 +74,7 @@ export default {
         {
           text: "Inicio",
           route: "/home",
-          description: "Inicio repositorio",
+          description: "Inicio hosting",
           icon: "mdi-home",
         },
         {
@@ -91,6 +82,12 @@ export default {
           route: "/pages",
           description: "Administración de recursos",
           icon: "mdi-file",
+        },
+        {
+          text: "Crear pagina",
+          route: "/pages/add",
+          description: "Creación de recursos",
+          icon: "mdi-book-open-page-variant",
         }
       ];
     

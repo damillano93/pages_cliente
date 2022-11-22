@@ -1,5 +1,5 @@
 <template>
- <v-container class="lighten-5">
+ <v-container>
    <div>
     <h1  align="center" >{{ h1.text }}  <v-icon :title="title.text" >{{h1.icon}}</v-icon></h1>
     </div>
@@ -27,11 +27,13 @@
     >
 
       <template v-slot:[`item.page_name`]="{ item }">
-        <a :href="item.page_name">
+        <a :href="item.page_name" target="_blank">
          https://pages.planestic.udistrital.edu.co/{{ item.page_name }}
         </a>
     </template>
-
+    <template v-slot:[`item.created_at`]="{ item }">
+        {{ getDate(item.created_at) }}
+      </template>
      <template v-slot:[`item.actions`]="{ item }">
             <v-icon small :title="actions.edit.title"  class="mr-2" @click="editUser(item.id)">{{actions.edit.icon}}</v-icon>
             <v-icon small :title="actions.detail.title" class="mr-2" @click="detailUser(item.id)">{{actions.detail.icon}}</v-icon>
@@ -56,16 +58,15 @@ export default {
     title: "",
     headers: [
       { text: "Nombre", value: "name", align: "start", sortable: false },
-       { text: "apellido", value: "last_name", sortable: false },
-      { text: "email", value: "email", sortable: false },
-      { text: "pagina", value:   "page_name", sortable: false },
-      { text: "creado", value: "created_at", sortable: false },
-      { text: "Actions", value: "actions", sortable: false },
+       { text: "Apellido", value: "last_name", sortable: false },
+      { text: "Pagina", value:   "page_name", sortable: false },
+      { text: "Creado", value: "created_at", sortable: false },
+      { text: "Acciones", value: "actions", sortable: false },
     ],
     actions:{
-    edit: {  title: "Editar usuario", icon: "mdi-pencil" },
-    detail:{  title: "Detalle de usuario", icon: " mdi-format-list-bulleted" },
-    delete:{ title: "Eliminar usuario", icon: "mdi-delete" },
+    edit: {  title: "Editar pagina", icon: "mdi-pencil" },
+    detail:{  title: "Detalle de pagina", icon: " mdi-format-list-bulleted" },
+    delete:{ title: "Eliminar pagina", icon: "mdi-delete" },
     }
   };
   },
@@ -85,10 +86,15 @@ export default {
       this.retrieveUsers();
     },
 
+
     removeAllUsers() {
       
     },
-
+    getDate(date) {
+      const localDate = new Date(date);
+      return localDate;
+    },
+    
     searchTitle() {
        UserService.getUsersByEmail(this.title)
         .then((response) => {
@@ -103,7 +109,7 @@ export default {
       this.$router.push({ name: "editusers", params: { id: id } });
     },
         detailUser(id) {
-      this.$router.push({ name: "detailusers", params: { id: id } });
+      this.$router.push({ name: "detailpages", params: { id: id } });
     },
     deleteUser(id) {
       UserService.deleteUsersById(id)

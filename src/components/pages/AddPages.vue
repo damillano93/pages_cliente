@@ -1,23 +1,61 @@
 <template>
-  <v-container class="lighten-5">
+  <v-container>
     <div>
       <h1>{{ title }}</h1>
     </div>
-    <v-row align="center" class="list px-3 mx-auto">
-      <div class="panel-body">
-        <vue-form-generator
-          :schema="schema"
-          :model="model"
-          :options="formOptions"
-        >
-        </vue-form-generator>
+    <div class="row row--dense">
+      <div v-for="(button, index) in buttons" :key="index" class="col-sm-8 col-lg-4 col-12">
+        <v-card outlined>
+          <a :disabled=button.disabled @click="createPage(button.route)" style="text-decoration: none;">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-icon large>
+                  {{ button.icon }}
+                </v-icon>
+
+                <v-list-item-title class="text-h5 mb-1">
+                  {{ button.text }}
+                </v-list-item-title>
+                <v-list-item-subtitle>{{ button.description }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </a>
+        </v-card>
+
       </div>
-      <div>
-        <v-alert v-if="result.state" border="top" :color="result.color" dark>
-          {{ result.text }}
-        </v-alert>
-      </div>
-    </v-row>
+    </div>
+
+    <v-dialog v-model="dialog2" max-width="800px">
+      <v-card>
+        <v-card-title>
+          <h2>Nueva pagina</h2>
+        </v-card-title>
+        <v-card-text>
+          <v-text-field v-model="model.name" label="name" required></v-text-field>
+          <v-text-field v-model="model.email" label="e-mail" required></v-text-field>
+          <v-text-field v-model="model.type" label="tipo" required></v-text-field>
+          <v-text-field v-model="model.page_name" label="nombre de la pagina" required></v-text-field>
+
+          <v-btn small color="success" @click="submit()"> Crear pagina </v-btn>
+          &nbsp;
+          <div>
+            <p></p>
+            &nbsp; &nbsp;
+            <v-alert v-if="result.state" border="top" :color="result.color" dark>
+              <a :href="result.url" target="_blank">
+                  {{ result.text }}
+                </a>
+            </v-alert>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" text @click="dialog2 = false">
+            close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-container>
 </template>
 
@@ -28,6 +66,8 @@ import UserService from "../../services/users";
 export default {
   data() {
     return {
+      dialog2: false,
+      buttons: [],
       model: {},
       title: "Crear paginas",
       result: { state: false },
@@ -41,6 +81,7 @@ export default {
             placeholder: "Escriba el nombre",
             featured: true,
             required: true,
+
           },
           {
             type: "input",
@@ -71,7 +112,7 @@ export default {
             default: "WORDPRESS",
             help: `la pagina que quiere crear`,
           },
-                    {
+          {
             type: "input",
             inputType: "text",
             label: "Nombre de la pagina",
@@ -95,13 +136,14 @@ export default {
     }
   },
   methods: {
-    submit(model) {
-      UserService.createUser({name: model.name, last_name:model.last_name, email: model.email, page_name: model.page_name})
+    submit() {
+      UserService.createUser({ name: this.model.name, last_name: this.model.last_name, email: this.model.email, page_name: this.model.page_name })
         .then(({ data }) => {
           this.result = {
-            text: `la pagina se creo https://pages.planestic.udistrital.edu.co/${model.page_name}  ${data}`,
+            text: `la pagina se creo https://pages.planestic.udistrital.edu.co/${this.model.page_name}  ${data}`,
             color: "green lighten-2",
             state: true,
+            url: `https://pages.planestic.udistrital.edu.co/${this.model.page_name}`,
           };
           this.model = {};
         })
@@ -113,11 +155,41 @@ export default {
           };
         });
     },
+    createPage(type) {
+      console.log(type)
+      this.dialog2 = true
+      this.model = { name: localStorage.name, last_name: localStorage.name, email: localStorage.email, page_name: "", type: type }
+    },
   },
+  mounted() {
+    this.buttons = [
+      {
+        text: "Wordpress",
+        route: "Wordpress",
+        description: "Cms wordpress",
+        icon: "mdi-wordpress",
+        disabled: 0,
+      },
+      {
+        text: "Drupal",
+        route: "drupal",
+        description: "Cms wordpress",
+        icon: "mdi-drupal",
+        disabled: 1,
+
+      },
+      {
+        text: "Contenido estatico",
+        route: "html",
+        description: "paginas de contenido estatico",
+        icon: "mdi-language-html5",
+      }
+    ];
+  }
 };
 </script>
 
- <style>
+<style>
 html {
   font-family: Tahoma;
   font-size: 14px;
@@ -133,18 +205,23 @@ body {
 pre {
   overflow: auto;
 }
+
 pre .string {
   color: #885800;
 }
+
 pre .number {
   color: blue;
 }
+
 pre .boolean {
   color: magenta;
 }
+
 pre .null {
   color: red;
 }
+
 pre .key {
   color: green;
 }

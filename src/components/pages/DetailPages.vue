@@ -1,226 +1,169 @@
 <template>
-  <v-container class="grey lighten-5">
-    <h1>{{ title }}</h1>
-    <v-row align="center" class="list px-3 mx-auto">
-      <v-card class="mx-auto" max-width="344">
-        <v-img
-          src="https://cdn.vuetifyjs.com/images/cards/forest-art.jpg"
-        ></v-img>
-
-        <v-card-text>
-          <h3 class="title primary--text">
-            {{ text.firstName }} {{ model.firstName }}
-          </h3>
-          <h3 class="title primary--text">
-            {{ text.lastName }} {{ model.lastName }}
-          </h3>
-          <h3 class="title primary--text">
-            {{ text.email }} {{ model.email }}
-          </h3>
-          <h3 class="title primary--text">
-            {{ text.userName }} {{ model.userName }}
-          </h3>
-          <v-icon small class="mr-2" @click="editUser(model.email)"
-            >mdi-pencil</v-icon
-          >
-          <v-icon small @click="deleteUser(model.id)">mdi-delete</v-icon>
-        </v-card-text>
-      </v-card>
-    </v-row>
-    <v-btn small color="success" @click="getCourses"> ver cursos </v-btn>
-    &nbsp;
-          <v-btn small color="primary"  @click="dialog2 = true" >
-        Agregar cursos
-      </v-btn>
-        <v-col cols="12" sm="12">
-      <v-card class="mx-auto" tile>
-        <v-card-title>{{title2}}</v-card-title>
-
-        <v-data-table
-          :headers="headers"
-          :items="courses"
-          disable-pagination
-          :hide-default-footer="true"
-        >
-          <template v-slot:[`item.actions`]="{ item }">
-            <v-icon small class="mr-2" @click="editCourses(item.id)">mdi-pencil</v-icon>
-            <v-icon small class="mr-2" @click="detailCourses(item.id)">mdi-domain</v-icon>
-            <v-icon small @click="deleteCourses(item.id)">mdi-delete</v-icon>
-          </template>
-        </v-data-table>
-
-        <v-card-actions v-if="courses.length > 0">
-
-        </v-card-actions>
-      </v-card>
-    </v-col>
-     <v-dialog
-        v-model="dialog2"
-        max-width="500px"
-      >
-        <v-card>
-          <v-card-title>
-            Agregar cursos
-          </v-card-title>
-          <v-card-text>
-            <v-select :items="allCourses" v-model="newCourse" name="courses" item-value="id" item-text="shortname" label="Select a course"/>
-             <v-select :items="roles" v-model="newRoleId" name="roles" item-value="id" item-text="name" label="Select a role"/>
-       <v-btn small color="success" @click="addCourses"> agregar curso </v-btn>
-           <div>
-      <v-alert v-if="result.state" border="top" :color="result.color" dark>
-        {{ result.text }}
-      </v-alert>
+  <v-container>
+    <h1>
+      Pagina: /{{ model.page_name }}
+      <v-icon large>
+        {{ icon }}
+      </v-icon>
+    </h1>
+    <div>
+      <v-row>
+        <v-col sm="12">
+          <v-card class="pa-2" outlined tile>
+            <h2>Información de pagina</h2>
+          </v-card>
+          <v-row no-gutters>
+            <v-col cols="8" sm="6">
+              <v-card class="pa-2" outlined tile>
+                <strong>id:</strong>
+              </v-card>
+            </v-col>
+            <v-col cols="4" sm="6">
+              <v-card class="pa-2" outlined tile>
+                {{ model.id }}
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="8" sm="6">
+              <v-card class="pa-2" outlined tile>
+                <strong>url:</strong>
+              </v-card>
+            </v-col>
+            <v-col cols="4" sm="6">
+              <v-card class="pa-2" outlined tile>
+                <a :href="getUrl(model.page_name)" target="_blank">
+                  {{ model.page_name }}
+                </a>
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="8" sm="6">
+              <v-card class="pa-2" outlined tile>
+                <strong>fecha de creación:</strong>
+              </v-card>
+            </v-col>
+            <v-col cols="4" sm="6">
+              <v-card class="pa-2" outlined tile>
+                {{ getDate(model.created_at) }}
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="8" sm="6">
+              <v-card class="pa-2" outlined tile>
+                <strong>estado:</strong>
+              </v-card>
+            </v-col>
+            <v-col cols="4" sm="6">
+              <v-card class="pa-2" outlined tile>
+                Activo
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="8" sm="6">
+              <v-card class="pa-2" outlined tile>
+                <strong>tipo:</strong>
+              </v-card>
+            </v-col>
+            <v-col cols="4" sm="6">
+              <v-card class="pa-2" outlined tile>
+                Wordpress
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
     </div>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn
-              color="primary"
-              text
-              @click="dialog2 = false"
-            >
-              cerrar
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+    <div>
+      &nbsp;
+      &nbsp;
+      &nbsp;
+
+
+      <v-expansion-panels>
+    <v-expansion-panel >
+      <v-expansion-panel-header>
+       Acciones
+      </v-expansion-panel-header>
+      <v-expansion-panel-content>
+        <v-row justify="space-around">
+          <v-icon large v-for="action in actions" :color=action.color :key="action.icon">{{ action.icon }}</v-icon>
+  </v-row>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+    <v-expansion-panel >
+      <v-expansion-panel-header>
+       Metricas
+      </v-expansion-panel-header>
+      <v-expansion-panel-content>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+
+  </v-expansion-panels>
+  
+    </div>
   </v-container>
 </template>
 
 <script>
-import moodle from "../../services/moodle";
-import MoodleService from "../../services/moodle";
+import PagesService from "../../services/users";
+
 export default {
   data() {
     return {
-      title: "DETAIL USER",
-       title2: "COURSES",
-       result: { state: false},
       model: {},
-      text: {
-        firstName: "Nombre:",
-        lastName: "Apellido:",
-        email: "Email:",
-        userName: "Nombre de usuario:",
+      icon: "mdi-wordpress",
+      actions: [{
+        color: "green darken-2",
+        icon: "mdi-play",
+        action: "play"
       },
-      courses: [],
-      headers: [
-        { text: "shortname",  value: "shortname", align: "start", sortable: false },
-        { text: "categoryid", value: "categoryid", sortable: false },
-        { text: "fullname", value: "fullname", sortable: false },
-        { text: "displayname", value: "displayname", sortable: false },
-        { text: "summary", value: "summary", sortable: false },
-        { text: "visible", value: "visible", sortable: false },
-        { text: "Actions", value: "actions", sortable: false },
-      ],
-       dialog2: false,
-       allCourses : [],
-       roles: [
-         {id: "1", name: "manager"},
-         {id: "2", name: "coursecreator"},
-         {id: "3", name: "editingteacher"},
-         {id: "4", name: "teacher"},
-         {id: "5", name: "student"},
-         {id: "6", name: "guest"},
-         {id: "7", name: "user"},
-         {id: "8", name: "frontpage"},
-       ],
-       newCourse: "",
-       newRoleId: ""
+      {
+        color: "gray darken-2",
+        icon: "mdi-pause",
+        action: "pause"
+      },
+      {
+        color: "red darken-2",
+        icon: "mdi-stop",
+        action: "stop"
+      },]
     };
   },
   methods: {
-    getUser(email) {
-      MoodleService.getUsersByEmail(email)
+    getPageInfo(id) {
+      PagesService.getUsersByid(id)
         .then((response) => {
-          this.model = {
-            id: response.data.users[0].id,
-            userName: response.data.users[0].username,
-            password: response.data.users[0].password,
-            firstName: response.data.users[0].firstname,
-            lastName: response.data.users[0].lastname,
-            email: response.data.users[0].email,
-          };
+          if (response.data) {
+            this.model = response.data[0]
+          }
         })
         .catch((e) => {
           console.log(e);
         });
     },
-    editUser(id) {
-      this.$router.push({ name: "editusers", params: { id: id } });
+    getDate(date) {
+      const localDate = new Date(date);
+      return localDate;
     },
-    deleteUser(id) {
-      moodle
-        .deleteUsersById(id)
-        .then(() => {
-          this.refreshList();
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
-    getCourses() {
-      const id = this.model.id
-      console.log(id)
-      
-      MoodleService.getCoursesByUserId(id)
-        .then((response) => {
-          this.courses = response.data;
-          console.log(this.courses);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-        
-    },
-        getallCourses() {
-      
-      MoodleService.getCourses()
-        .then((response) => {
-          this.allCourses = response.data;
-          console.log(this.allCourses);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-        
-    },
-    addCourses(){
-        const idCourse =  this.newCourse
-        const idUser = this.model.id 
-        const idRole =  this.newRoleId
 
-        const data = {
-          roleId: idRole,
-          courseId: idCourse,
-          userId: idUser
-        }
-          MoodleService.enrolUsers(data)
-          .then((response) => {
-          this.result = {
-              text: `el curso usuario se agrego al curso ${response}`,
-              color: "green lighten-2",
-              state: true
-            }
-          this.newCourse = ''
-          this.newRoleId = ''
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+    getUrl(path) {
 
-        console.log(idCourse, idUser)
+      return "https://pages.planestic.udistrital.edu.co/" + path;
     },
   },
 
   mounted() {
     this.message = "";
-    this.getUser(this.$route.params.id);
-    this.getallCourses()
+    this.getPageInfo(this.$route.params.id);
   },
 };
 </script>
 
- <style>
+<style>
 html {
   font-family: Tahoma;
   font-size: 14px;
@@ -236,18 +179,23 @@ body {
 pre {
   overflow: auto;
 }
+
 pre .string {
   color: #885800;
 }
+
 pre .number {
   color: blue;
 }
+
 pre .boolean {
   color: magenta;
 }
+
 pre .null {
   color: red;
 }
+
 pre .key {
   color: green;
 }
@@ -295,5 +243,14 @@ fieldset {
 
 .panel-body {
   padding: 15px;
+}
+
+.center {
+  margin: auto;
+  padding: 1px;
+}
+
+.ci {
+  margin-right: 0.75rem;
 }
 </style>

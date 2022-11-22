@@ -1,17 +1,10 @@
 <template>
   <div>
-    <div v-if="!isMobile" class="banner-all" :style="myStyle">
-      <img
-        class="logo-planestic1"
-        src="./assets/images/LOGO-UD-BLANCO-13-13.png"
-      />
-      <img
-        class="logo-planestic2"
-        src="./assets/images/logo_planestic2-01.png"
-      />
-    </div>
     <v-app>
-      <v-app-bar app  style="position: absolute;">
+      <v-app-bar app  style="
+  background: -webkit-linear-gradient(-45deg,yellow,red);
+  background: linear-gradient(-45deg, yellow,red);
+">
         <div v-if="!isMobile" class="d-flex align-center mr-2">
           {{ title }}
         </div>
@@ -82,7 +75,7 @@
         </div>
       </v-app-bar>
 
-      <v-main :style="backStyle">
+      <v-main>
         <router-view />
       </v-main>
     </v-app>
@@ -125,6 +118,7 @@ export default {
       name: "",
       token: "",
       isMobile: false,
+      theme: "dark",
       myStyle: {
         backgroundColor: "#17aa5c",
         width: 700,
@@ -150,20 +144,21 @@ export default {
     },
     darkMode() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      if(this.$vuetify.theme.dark){
-        this.backStyle =  {
+      if (this.$vuetify.theme.dark) {
+        localStorage.theme = "dark"
+        this.backStyle = {
           "background-color": "#1e1e1e"
+        }
       }
-      }
-      else{
-         this.backStyle =  {
+      else {
+        localStorage.theme = "light"
+        this.backStyle = {
           "background-color": "#F3F3F3"
-      }
+        }
       }
     },
     logout() {
-      localStorage.clear();
-      this.image();
+      localStorage.removeItem("token")
       this.$router.push({ name: "login" });
       location.reload();
     },
@@ -172,6 +167,13 @@ export default {
     },
   },
   mounted() {
+    if (localStorage.theme == "dark") {
+      this.$vuetify.theme.dark = true
+    }
+    if (localStorage.theme == "light") {
+      this.$vuetify.theme.dark = false
+    }
+
     if (localStorage.name) {
       this.name = localStorage.name;
     }
@@ -207,8 +209,6 @@ export default {
   margin-top: 5px;
   float: right;
 }
-.backStyle {
-    background-color: #F3F3F3;
-}
+
 
 </style>
